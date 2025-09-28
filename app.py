@@ -1,7 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
 from service.cleaning import clean
 
-
 app = FastAPI()
 
 @app.get("/")
@@ -20,8 +19,9 @@ async def train_endpoint(file: UploadFile = File(...)):
             "status_code": 400
         }
     
-    clean(file.file)
+    df_clean = clean(file.file)
 
     return {
-        "status_code": 200
+        "status_code": 200,
+        "df_clean": df_clean.to_dict(orient="records")
     }
