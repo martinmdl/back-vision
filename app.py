@@ -19,9 +19,8 @@ async def train_endpoint(file: UploadFile = File(...)):
             "status_code": 400
         }
     
-    df_clean = clean(file.file)
+    clean(file.file)
 
     return {
         "status_code": 200,
-        "df_clean": df_clean.to_dict(orient="records")
     }
