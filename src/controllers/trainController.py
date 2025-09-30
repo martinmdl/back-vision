@@ -1,11 +1,7 @@
 from fastapi import FastAPI, UploadFile, File
-from service.cleaning import clean
+from src.services.trainService import clean
 
 app = FastAPI()
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
 
 #### Controllers ####
 
