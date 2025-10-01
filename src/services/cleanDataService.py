@@ -87,6 +87,7 @@ def clean_detalle_venta(df_detalle_venta, df_producto, df_venta):
     # Eliminar filas sin idProducto (productos no mapeados)
     df_detalle_venta = df_detalle_venta.dropna(subset=["idProducto"])
     df_detalle_venta = df_detalle_venta.drop(columns=["Producto", "Categoría"])
+    df_detalle_venta = df_detalle_venta.reset_index(drop=True) # Reindexar despues de dropna 
 
     df_detalle_venta["Cancelada"] = df_detalle_venta["Cancelada"].map({"Si": True, "No": False})
 
@@ -97,16 +98,17 @@ def clean_detalle_venta(df_detalle_venta, df_producto, df_venta):
         how="left"
     )
     df_detalle_venta["creacion"] = df_detalle_venta["actualizacion"] = df_detalle_venta_aux["creacion"]
+
     df_detalle_venta["activo"] = True
 
     df_detalle_venta = df_detalle_venta.rename(columns={
         "Id. Venta": "idVenta",
-        "Creación": "creacion",
         "Cantidad": "cantidad",
         "Cancelada": "cancelada",
         "Precio": "precio",
         "Costo base": "costo"
     })
+
     df_detalle_venta = df_detalle_venta[["idDetalle","idVenta","idProducto","cantidad","precio","costo","cancelada","creacion","actualizacion","activo"]]
     
     return df_detalle_venta
