@@ -1,6 +1,7 @@
 from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TIMESTAMP, ForeignKey
 from sqlalchemy.dialects.postgresql import insert
 from src.db.engine import engine
+from enum import Enum
 
 metadata = MetaData()
 
@@ -40,8 +41,44 @@ detalle_ventas = Table(
     Column("activo", Boolean)
 )
 
+clima = Table(
+    "clima", metadata,
+    Column("fecha", TIMESTAMP, primary_key=True),
+    Column("temp_avg", Float),
+    Column("temp_min", Float),
+    Column("temp_max", Float),
+    Column("humedad", Float),
+    Column("lluvia", Float),
+    Column("viento", Float),
+    Column("presion", Float),
+    Column("nubosidad", Float)
+)
+
+class TableEnum(Enum):
+    ventas = ("ventas", ventas)
+    productos = ("productos", productos)
+    detalle_ventas = ("detalle_ventas", detalle_ventas)
+    clima = ("clima", clima)
+
+    @classmethod
+    def get_table(cls, name: str):
+        for key, value in cls.__members__.items():
+            if key.lower() == name.lower():
+                return value.value[1]
+        raise ValueError(f"Tabla '{name}' no encontrada.")
+
 # Crear tablas si no existen
 metadata.create_all(engine)
+
+def save_to_postgres(df_table, table_name, id_table):
+    table = TableEnum.get_table(table_name)
+    upsert_dataframe(df_table, table, id_table)
+
+# def save_to_postgres(df_venta, df_producto, df_detalle_venta, df_clima):
+#     upsert_dataframe(df_venta, ventas, "idVenta")
+#     upsert_dataframe(df_producto, productos, "idProducto")
+#     upsert_dataframe(df_detalle_venta, detalle_ventas, "idDetalle")
+#     upsert_dataframe(df_clima, clima, "fecha")
 
 def upsert_dataframe(df, table, pk_column):
     """Inserta o ignora registros existentes según pk_column"""
@@ -51,8 +88,3 @@ def upsert_dataframe(df, table, pk_column):
                 index_elements=[pk_column]
             )
             conn.execute(stmt)
-
-def save_to_postgres(df_venta, df_producto, df_detalle_venta):
-    upsert_dataframe(df_venta, ventas, "idVenta")
-    upsert_dataframe(df_producto, productos, "idProducto")
-    upsert_dataframe(df_detalle_venta, detalle_ventas, "idDetalle")
