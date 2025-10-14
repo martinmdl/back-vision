@@ -1,6 +1,17 @@
 import pandas as pd
+# import os
 
-def cleanWeather(df_clima):   
+# def cleanWeather():
+
+#     base_dir = os.path.dirname(os.path.abspath(__file__))
+#     file_path = os.path.join(base_dir, "clima_diario_aeroparque_2025.csv")
+#     file_path = os.path.normpath(file_path)
+
+#     df_clima = pd.read_csv(file_path)
+#     df_clima_og = df_clima.copy()
+
+
+def cleanWeather(df_clima):
 
     # Eliminar columnas innecesarias
     df_clima = df_clima.drop(columns=[
@@ -21,9 +32,6 @@ def cleanWeather(df_clima):
     df_clima = df_clima.drop(columns=["year", "month", "day"])
     df_clima = df_clima[["fecha", "temp", "tmin", "tmax", "rhum", "prcp", "wspd", "pres", "cldc"]]
 
-    # Acotar periodo de tiempo
-    # Inicio: 16/04/2025 - Fin: 04/09/2025
-    ### TODO automatizar fechas ###
     df_clima = pd.DataFrame({ "fecha":pd.date_range(start="2025-04-16", end="2025-09-04") }).merge(df_clima, on="fecha", how="left")
 
     # Renombrar columnas
@@ -38,5 +46,14 @@ def cleanWeather(df_clima):
         "cldc": "nubosidad"
     })
 
-    ### TODO guardar df_clima en la base de datos ###
-    ### TODO testear esta limpieza ###
+    return df_clima
+
+## TESTING CON ARCHIVO LOCAL
+## ALGUNAS FILAS QUEDAN CON NaN
+
+    # return df_clima, df_clima_og
+
+# df_clean, df_og = cleanWeather()
+
+# print(df_og)
+# print(df_clean)

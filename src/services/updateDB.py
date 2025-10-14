@@ -74,17 +74,17 @@ def save_to_postgres(df_table, table_name, id_table):
     table = TableEnum.get_table(table_name)
     upsert_dataframe(df_table, table, id_table)
 
-# def save_to_postgres(df_venta, df_producto, df_detalle_venta, df_clima):
-#     upsert_dataframe(df_venta, ventas, "idVenta")
-#     upsert_dataframe(df_producto, productos, "idProducto")
-#     upsert_dataframe(df_detalle_venta, detalle_ventas, "idDetalle")
-#     upsert_dataframe(df_clima, clima, "fecha")
-
 def upsert_dataframe(df, table, pk_column):
-    """Inserta o ignora registros existentes según pk_column"""
-    with engine.begin() as conn:
+    # Inserta o ignora registros existentes según pk_column
+    with engine.begin() as begin:
         for row in df.to_dict(orient="records"):
             stmt = insert(table).values(**row).on_conflict_do_nothing(
                 index_elements=[pk_column]
             )
-            conn.execute(stmt)
+            begin.execute(stmt)
+
+def getDBLastYear():
+    with engine.connect() as conn:
+        result = conn.execute("SELECT MAX(EXTRACT(YEAR FROM creacion)) FROM ventas")
+        last_year = result.scalar()
+    return int(last_year) if last_year else None
