@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 from io import BytesIO
 import gzip
-from ..services.updateDB import getDBLastYear
+from ..db.updateDB import getDBLastYear
 
 async def getWeather(df_venta):
 

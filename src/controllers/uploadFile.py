@@ -1,6 +1,6 @@
 from fastapi import UploadFile, File, APIRouter
 from ..services.cleanBusinessData import clean_xls
-from ..services.updateDB import save_to_postgres
+from ..db.updateDB import save_to_postgres
 from ..services.cleanWeatherData import cleanWeather
 from ..utils.weather import getWeather
 
