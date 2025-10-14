@@ -1,4 +1,4 @@
-from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TIMESTAMP, ForeignKey
+from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TIMESTAMP, ForeignKey, text
 from sqlalchemy.dialects.postgresql import insert
 from src.db.engine import engine
 from enum import Enum
@@ -85,6 +85,6 @@ def upsert_dataframe(df, table, pk_column):
 
 def getDBLastYear():
     with engine.connect() as conn:
-        result = conn.execute("SELECT MAX(EXTRACT(YEAR FROM creacion)) FROM ventas")
+        result = conn.execute(text("SELECT MAX(EXTRACT(YEAR FROM creacion)) FROM ventas"))
         last_year = result.scalar()
     return int(last_year) if last_year else None
