@@ -1,0 +1,92 @@
+import calendar
+import pandas as pd
+import requests
+from db.updateDB import getDBLastYear
+from utils.weather import getYears
+
+async def getHoliday(df_venta):
+
+    firstYear, lastYear = getYears(df_venta)
+    dbLastYear = getDBLastYear()
+
+    if dbLastYear:
+        firstYear = min(dbLastYear + 1, lastYear)
+    
+    yearsToFetch = range(firstYear, lastYear + 1)
+
+    df_list = []
+
+    for year in yearsToFetch:
+        # Fetch archivo.csv holiday
+        holiday_info = requests.get(f"https://api.argentinadatos.com/v1/feriados/{year}")
+        if holiday_info.status_code != 200:
+            return {"error": f"No se pudo descargar el archivo para el año {year}"}
+        df_holiday = pd.DataFrame(holiday_info.json())
+
+
+        df_holiday = insertAnniversaries(df_holiday)
+        df_holiday = cleanHolidays(df_holiday)
+        df_list.append(df_holiday)
+
+    df_holiday = pd.concat(df_list, ignore_index=True)
+    
+    return df_holiday
+
+
+def cleanHolidays(df_holiday):
+
+    uniqueTypes = df_holiday["tipo"].unique()
+    typesCatalog = {tipo: i+1 for i, tipo in enumerate(uniqueTypes)}
+    df_holiday["tipo"] = df_holiday["tipo"].map(typesCatalog)
+    
+    df_holiday["fecha"] = pd.to_datetime(df_holiday["fecha"])
+
+    return df_holiday
+    
+def insertAnniversaries(df_holiday):
+
+    df_anniversaries = pd.DataFrame([
+        {
+            "fecha": thridSunday(2025, 6),
+            "tipo": "efemeride",
+            "nombre": "Día del Padre"
+        },
+        {
+            "fecha": "2025-06-20",
+            "tipo": "efemeride",
+            "nombre": "Día del amigo"
+        },
+        {
+            "fecha": thridSunday(2025, 8),
+            "tipo": "efemeride",
+            "nombre": "Día del Niño"
+        },
+        {
+            "fecha": "2025-09-21",          
+            "tipo": "efemeride",            
+            "nombre": "Día del Estudiante/Primavera",            
+        },
+        {
+            "fecha": thridSunday(2025, 10),
+            "tipo": "efemeride",
+            "nombre": "Día de la Madre"
+        },
+    ])
+
+    df_holiday = pd.concat([df_holiday, df_anniversaries], ignore_index=True)
+
+    return df_holiday
+
+def thridSunday(year, month):
+    c = calendar.Calendar()
+    sundays = [d for d in c.itermonthdates(year, month) if d.weekday() == 6 and d.month == month]
+    return sundays[2]
+
+## TESTING PURPOSES
+# from test_holiday import json_holiday
+# df_holiday = pd.DataFrame(json_holiday) 
+# print(df_holiday)
+# df_holiday = insertAnniversaries(df_holiday)
+# df_holiday = cleanHolidays(df_holiday)
+# print(df_holiday)
+# print(df_holiday["fecha"].dtype)
