@@ -114,5 +114,5 @@ def clean_detalle_venta(df_detalle_venta, df_producto, df_venta):
     return df_detalle_venta
 
 # # To test with local files
-# file_path = os.path.join(os.path.dirname(__file__), "00_ventas.xls")
+# file_path = os.path.join(os.path.dirname(__file__), "test_excel.xlsx")
 # clean_xls(file_path)

@@ -4,7 +4,7 @@ import pandas as pd
 # def cleanWeather():
 
 #     base_dir = os.path.dirname(os.path.abspath(__file__))
-#     file_path = os.path.join(base_dir, "clima_diario_aeroparque_2025.csv")
+#     file_path = os.path.join(base_dir, "test_clima.csv")
 #     file_path = os.path.normpath(file_path)
 
 #     df_clima = pd.read_csv(file_path)
