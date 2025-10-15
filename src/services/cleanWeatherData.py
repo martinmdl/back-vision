@@ -1,14 +1,4 @@
 import pandas as pd
-# import os
-
-# def cleanWeather():
-
-#     base_dir = os.path.dirname(os.path.abspath(__file__))
-#     file_path = os.path.join(base_dir, "test_clima.csv")
-#     file_path = os.path.normpath(file_path)
-
-#     df_clima = pd.read_csv(file_path)
-#     df_clima_og = df_clima.copy()
 
 
 def cleanWeather(df_clima):
@@ -47,13 +37,3 @@ def cleanWeather(df_clima):
     })
 
     return df_clima
-
-## TESTING CON ARCHIVO LOCAL
-## ALGUNAS FILAS QUEDAN CON NaN
-
-    # return df_clima, df_clima_og
-
-# df_clean, df_og = cleanWeather()
-
-# print(df_og)
-# print(df_clean)

@@ -1,6 +1,5 @@
 import pandas as pd
 import uuid
-# import os
 
 def clean_xls(xls_file):
 
@@ -11,10 +10,6 @@ def clean_xls(xls_file):
     df_venta = clean_venta(df_venta)
     df_producto = clean_producto(df_producto)
     df_detalle_venta = clean_detalle_venta(df_detalle_venta, df_producto, df_venta)
-
-    # print(df_detalle_venta.head(2))
-    # print(df_venta.head(2))
-    # print(df_producto.head(2))
 
     return df_venta, df_producto, df_detalle_venta
 
@@ -112,8 +107,4 @@ def clean_detalle_venta(df_detalle_venta, df_producto, df_venta):
     df_detalle_venta = df_detalle_venta[["id_detalle","id_venta","id_producto","cantidad","precio","costo","cancelada","creacion","actualizacion","activo"]]
     
     return df_detalle_venta
-
-# # To test with local files
-# file_path = os.path.join(os.path.dirname(__file__), "test_excel.xlsx")
-# clean_xls(file_path)
 

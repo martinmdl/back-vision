@@ -33,7 +33,7 @@ async def upload_file(file: UploadFile = File(...)):
 
     # feriados (consultar API: https://api.argentinadatos.com/v1/feriados/<AÑOS>)
     df_feriado, df_catalog = await getHoliday(df_venta)
-    # save_to_postgres(df_feriado, "feriado", "fecha")
+    save_to_postgres(df_feriado, "feriado", "fecha")
     save_to_postgres(df_catalog, "tipo_feriado", "id_tipo_feriado") 
 
     # unificar_coso

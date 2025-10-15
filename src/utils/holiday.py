@@ -28,9 +28,7 @@ async def getHoliday(df_venta):
         df_holiday = insertAnniversaries(df_holiday, year)
 
         df_holiday = cleanHolidays(df_holiday, df_catalog)
-        print("DEBUUUG: \n",df_holiday)
-        df_holiday = df_holiday[["fecha", "tipo", "nombre"]]
-        
+
         df_list.append(df_holiday)
 
     df_holiday = pd.concat(df_list, ignore_index=True)
@@ -88,13 +86,3 @@ def thirdSunday(year, month):
     c = calendar.Calendar()
     sundays = [d for d in c.itermonthdates(year, month) if d.weekday() == 6 and d.month == month]
     return sundays[2]
-
-# TESTING PURPOSES
-# from test_holiday import json_holiday
-# df_holiday = pd.DataFrame(json_holiday) 
-#print(df_holiday)
-#df_holiday = insertAnniversaries(df_holiday)
-#df_holiday = cleanHolidays(df_holiday)
-# print(df_holiday)
-#print(df_holiday["fecha"].dtype)
-# print(buildTypesCatalog(df_holiday))
