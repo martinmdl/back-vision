@@ -1,4 +1,4 @@
-from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TIMESTAMP, ForeignKey, text
+from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TIMESTAMP, ForeignKey, text, DateTime
 from sqlalchemy.dialects.postgresql import insert
 from src.db.engine import engine
 from enum import Enum
@@ -54,11 +54,26 @@ clima = Table(
     Column("nubosidad", Float)
 )
 
+feriado = Table (
+    "feriado", metadata,
+    Column("fecha", DateTime, primary_key=True),
+    Column("tipo", Integer),
+    Column("nombre", String)
+)
+
+tipoDeFeriado = Table (
+    "tipoDeFeriado", metadata,
+    Column("idTipoDeFeriado", Integer, primary_key=True),
+    Column("tipo", String)
+)
+
 class TableEnum(Enum):
     ventas = ("ventas", ventas)
     productos = ("productos", productos)
     detalle_ventas = ("detalle_ventas", detalle_ventas)
     clima = ("clima", clima)
+    feriado = ("feriado", feriado)
+    tipoDeFeriado = ("tipoDeFeriado", tipoDeFeriado)
 
     @classmethod
     def get_table(cls, name: str):

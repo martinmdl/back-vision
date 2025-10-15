@@ -1,8 +1,9 @@
 import calendar
 import pandas as pd
 import requests
-from db.updateDB import getDBLastYear
-from utils.weather import getYears
+from .weather import getYears
+from ..db.updateDB import getDBLastYear
+
 
 async def getHoliday(df_venta):
 
@@ -15,7 +16,8 @@ async def getHoliday(df_venta):
     yearsToFetch = range(firstYear, lastYear + 1)
 
     df_list = []
-
+    df_catalog = buildTypesCatalog()
+    
     for year in yearsToFetch:
         # Fetch archivo.csv holiday
         holiday_info = requests.get(f"https://api.argentinadatos.com/v1/feriados/{year}")
@@ -23,51 +25,54 @@ async def getHoliday(df_venta):
             return {"error": f"No se pudo descargar el archivo para el año {year}"}
         df_holiday = pd.DataFrame(holiday_info.json())
 
+        df_holiday = insertAnniversaries(df_holiday, year)
 
-        df_holiday = insertAnniversaries(df_holiday)
-        df_holiday = cleanHolidays(df_holiday)
+        df_holiday = cleanHolidays(df_holiday, df_catalog)
+        
         df_list.append(df_holiday)
 
     df_holiday = pd.concat(df_list, ignore_index=True)
     
-    return df_holiday
+    return [df_holiday, df_catalog]
 
 
-def cleanHolidays(df_holiday):
+def buildTypesCatalog():
+    data = {
+        "idTipoDeFeriado": [1, 2, 3, 4],
+        "tipo": ["inamovible", "puente", "trasladable", "efemeride"]
+    }
+    df_catalog = pd.DataFrame(data)
+    return df_catalog
 
-    uniqueTypes = df_holiday["tipo"].unique()
-    typesCatalog = {tipo: i+1 for i, tipo in enumerate(uniqueTypes)}
-    df_holiday["tipo"] = df_holiday["tipo"].map(typesCatalog)
-    
+def cleanHolidays(df_holiday, df_catalog):
+    df_holiday["tipo"] = df_holiday["tipo"].map(df_catalog.set_index("tipo")["idTipoDeFeriado"])
     df_holiday["fecha"] = pd.to_datetime(df_holiday["fecha"])
-
     return df_holiday
     
-def insertAnniversaries(df_holiday):
-
+def insertAnniversaries(df_holiday, year):
     df_anniversaries = pd.DataFrame([
         {
-            "fecha": thridSunday(2025, 6),
+            "fecha": thirdSunday(year, 6),
             "tipo": "efemeride",
             "nombre": "Día del Padre"
         },
         {
-            "fecha": "2025-06-20",
+            "fecha": f"{year}-06-20",
             "tipo": "efemeride",
             "nombre": "Día del amigo"
         },
         {
-            "fecha": thridSunday(2025, 8),
+            "fecha": thirdSunday(year, 8),
             "tipo": "efemeride",
             "nombre": "Día del Niño"
         },
         {
-            "fecha": "2025-09-21",          
+            "fecha": f"{year}-06-20",          
             "tipo": "efemeride",            
             "nombre": "Día del Estudiante/Primavera",            
         },
         {
-            "fecha": thridSunday(2025, 10),
+            "fecha": thirdSunday(year, 10),
             "tipo": "efemeride",
             "nombre": "Día de la Madre"
         },
@@ -77,16 +82,17 @@ def insertAnniversaries(df_holiday):
 
     return df_holiday
 
-def thridSunday(year, month):
+def thirdSunday(year, month):
     c = calendar.Calendar()
     sundays = [d for d in c.itermonthdates(year, month) if d.weekday() == 6 and d.month == month]
     return sundays[2]
 
-## TESTING PURPOSES
+# TESTING PURPOSES
 # from test_holiday import json_holiday
 # df_holiday = pd.DataFrame(json_holiday) 
+#print(df_holiday)
+#df_holiday = insertAnniversaries(df_holiday)
+#df_holiday = cleanHolidays(df_holiday)
 # print(df_holiday)
-# df_holiday = insertAnniversaries(df_holiday)
-# df_holiday = cleanHolidays(df_holiday)
-# print(df_holiday)
-# print(df_holiday["fecha"].dtype)
+#print(df_holiday["fecha"].dtype)
+# print(buildTypesCatalog(df_holiday))
