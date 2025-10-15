@@ -28,6 +28,8 @@ async def getHoliday(df_venta):
         df_holiday = insertAnniversaries(df_holiday, year)
 
         df_holiday = cleanHolidays(df_holiday, df_catalog)
+        print("DEBUUUG: \n",df_holiday)
+        df_holiday = df_holiday[["fecha", "tipo", "nombre"]]
         
         df_list.append(df_holiday)
 
@@ -38,14 +40,14 @@ async def getHoliday(df_venta):
 
 def buildTypesCatalog():
     data = {
-        "idTipoDeFeriado": [1, 2, 3, 4],
+        "id_tipo_feriado": [1, 2, 3, 4],
         "tipo": ["inamovible", "puente", "trasladable", "efemeride"]
     }
     df_catalog = pd.DataFrame(data)
     return df_catalog
 
 def cleanHolidays(df_holiday, df_catalog):
-    df_holiday["tipo"] = df_holiday["tipo"].map(df_catalog.set_index("tipo")["idTipoDeFeriado"])
+    df_holiday["tipo"] = df_holiday["tipo"].map(df_catalog.set_index("tipo")["id_tipo_feriado"])
     df_holiday["fecha"] = pd.to_datetime(df_holiday["fecha"])
     return df_holiday
     

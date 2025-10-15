@@ -7,7 +7,7 @@ metadata = MetaData()
 
 ventas = Table(
     "ventas", metadata,
-    Column("idVenta", Integer, primary_key=True),
+    Column("id_venta", Integer, primary_key=True),
     Column("total", Float),
     Column("tipo", String),
     Column("creacion", TIMESTAMP),
@@ -17,11 +17,11 @@ ventas = Table(
 
 productos = Table(
     "productos", metadata,
-    Column("idProducto", String, primary_key=True),
+    Column("id_producto", String, primary_key=True),
     Column("nombre", String),
     Column("categoria", String),
     Column("cantidad", Integer),
-    Column("total_ARS", Float),
+    Column("total_ars", Float),
     Column("creacion", TIMESTAMP),
     Column("actualizacion", TIMESTAMP),
     Column("activo", Boolean)
@@ -29,9 +29,9 @@ productos = Table(
 
 detalle_ventas = Table(
     "detalle_ventas", metadata,
-    Column("idDetalle", Integer, primary_key=True),
-    Column("idVenta", Integer, ForeignKey("ventas.idVenta")),
-    Column("idProducto", String, ForeignKey("productos.idProducto")),
+    Column("id_detalle", Integer, primary_key=True),
+    Column("id_venta", Integer, ForeignKey("ventas.id_venta")),
+    Column("id_producto", String, ForeignKey("productos.id_producto")),
     Column("cantidad", Integer),
     Column("precio", Float),
     Column("costo", Float),
@@ -61,9 +61,9 @@ feriado = Table (
     Column("nombre", String)
 )
 
-tipoDeFeriado = Table (
-    "tipoDeFeriado", metadata,
-    Column("idTipoDeFeriado", Integer, primary_key=True),
+tipo_feriado = Table (
+    "tipo_feriado", metadata,
+    Column("id_tipo_feriado", Integer, primary_key=True),
     Column("tipo", String)
 )
 
@@ -73,7 +73,7 @@ class TableEnum(Enum):
     detalle_ventas = ("detalle_ventas", detalle_ventas)
     clima = ("clima", clima)
     feriado = ("feriado", feriado)
-    tipoDeFeriado = ("tipoDeFeriado", tipoDeFeriado)
+    tipo_feriado = ("tipo_feriado", tipo_feriado)
 
     @classmethod
     def get_table(cls, name: str):

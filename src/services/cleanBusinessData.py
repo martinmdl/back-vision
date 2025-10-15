@@ -33,13 +33,13 @@ def clean_venta(df_venta):
     df_venta["activo"] = True
 
     df_venta = df_venta.rename(columns={
-        "Id": "idVenta",
+        "Id": "id_venta",
         "Creación": "creacion",
         "Total": "total",
         "Tipo de Venta": "tipo"
     })
 
-    df_venta = df_venta[["idVenta", "total", "tipo", "creacion", "actualizacion", "activo"]]
+    df_venta = df_venta[["id_venta", "total", "tipo", "creacion", "actualizacion", "activo"]]
     
     return df_venta
 
@@ -52,7 +52,7 @@ def clean_producto(df_producto):
     ], errors='ignore')
 
     # Crear idProducto con hashes
-    df_producto["idProducto"] = df_producto.apply(
+    df_producto["id_producto"] = df_producto.apply(
         lambda row: f"{row['Categoría'][:3].upper()}{str(uuid.uuid4())[:8]}", axis=1
     )
 
@@ -64,9 +64,9 @@ def clean_producto(df_producto):
         "Nombre": "nombre",
         "Categoría": "categoria",
         "Cantidad": "cantidad",
-        "Total ($)": "total_ARS"
+        "Total ($)": "total_ars"
     })
-    df_producto = df_producto[["idProducto", "nombre", "categoria", "cantidad", "total_ARS", "creacion", "actualizacion", "activo"]]
+    df_producto = df_producto[["id_producto", "nombre", "categoria", "cantidad", "total_ars", "creacion", "actualizacion", "activo"]]
     
     return df_producto
 
@@ -78,23 +78,23 @@ def clean_detalle_venta(df_detalle_venta, df_producto, df_venta):
     ], errors='ignore')
 
     df_detalle_venta = df_detalle_venta.sort_values(by=["Id. Venta"]).reset_index(drop=True)
-    df_detalle_venta["idDetalle"] = range(1, len(df_detalle_venta) + 1)
+    df_detalle_venta["id_detalle"] = range(1, len(df_detalle_venta) + 1)
 
     df_detalle_venta["Creación"] = pd.to_datetime(df_detalle_venta["Creación"])
 
-    mapa = dict(zip(df_producto["nombre"], df_producto["idProducto"]))
-    df_detalle_venta["idProducto"] = df_detalle_venta["Producto"].map(mapa)
+    mapa = dict(zip(df_producto["nombre"], df_producto["id_producto"]))
+    df_detalle_venta["id_producto"] = df_detalle_venta["Producto"].map(mapa)
     # Eliminar filas sin idProducto (productos no mapeados)
-    df_detalle_venta = df_detalle_venta.dropna(subset=["idProducto"])
+    df_detalle_venta = df_detalle_venta.dropna(subset=["id_producto"])
     df_detalle_venta = df_detalle_venta.drop(columns=["Producto", "Categoría"])
     df_detalle_venta = df_detalle_venta.reset_index(drop=True) # Reindexar despues de dropna 
 
     df_detalle_venta["Cancelada"] = df_detalle_venta["Cancelada"].map({"Si": True, "No": False})
 
     df_detalle_venta_aux = df_detalle_venta.merge(
-        df_venta[["idVenta", "creacion"]],
+        df_venta[["id_venta", "creacion"]],
         left_on="Id. Venta",
-        right_on="idVenta",
+        right_on="id_venta",
         how="left"
     )
     df_detalle_venta["creacion"] = df_detalle_venta["actualizacion"] = df_detalle_venta_aux["creacion"]
@@ -102,17 +102,18 @@ def clean_detalle_venta(df_detalle_venta, df_producto, df_venta):
     df_detalle_venta["activo"] = True
 
     df_detalle_venta = df_detalle_venta.rename(columns={
-        "Id. Venta": "idVenta",
+        "Id. Venta": "id_venta",
         "Cantidad": "cantidad",
         "Cancelada": "cancelada",
         "Precio": "precio",
         "Costo base": "costo"
     })
 
-    df_detalle_venta = df_detalle_venta[["idDetalle","idVenta","idProducto","cantidad","precio","costo","cancelada","creacion","actualizacion","activo"]]
+    df_detalle_venta = df_detalle_venta[["id_detalle","id_venta","id_producto","cantidad","precio","costo","cancelada","creacion","actualizacion","activo"]]
     
     return df_detalle_venta
 
 # # To test with local files
 # file_path = os.path.join(os.path.dirname(__file__), "test_excel.xlsx")
 # clean_xls(file_path)
+
