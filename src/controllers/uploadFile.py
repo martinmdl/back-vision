@@ -1,4 +1,5 @@
 from fastapi import UploadFile, File, APIRouter
+import pandas as pd
 from ..utils.holiday import buildTypesCatalog, cleanHolidays, getHoliday
 from ..services.cleanBusinessData import clean_xls
 from ..db.updateDB import save_to_postgres
@@ -33,8 +34,16 @@ async def upload_file(file: UploadFile = File(...)):
 
     # feriados (consultar API: https://api.argentinadatos.com/v1/feriados/<AÑOS>)
     df_feriado, df_catalog = await getHoliday(df_venta)
-    save_to_postgres(df_feriado, "feriado", "fecha")
     save_to_postgres(df_catalog, "tipo_feriado", "id_tipo_feriado") 
+    save_to_postgres(df_feriado, "feriado", "id_feriado")
+
+    # ver donde va la creacion de venta_feriado
+    df_venta["fecha_venta"] = pd.to_datetime(df_venta["creacion"]).dt.normalize()
+    df_feriado["fecha_feriado"] = pd.to_datetime(df_feriado["fecha"]).dt.normalize()
+    df_venta_feriado = df_venta.merge(df_feriado, left_on="fecha_venta", right_on="fecha_feriado", how="inner")
+    df_venta_feriado = df_venta_feriado[["id_venta", "id_feriado"]]
+    df_venta_feriado["id_venta_feriado"] = range(1, len(df_venta_feriado)+1)
+    save_to_postgres(df_venta_feriado, "venta_feriado", "id_venta_feriado")
 
     # unificar_coso
 

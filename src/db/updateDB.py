@@ -1,4 +1,4 @@
-from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TIMESTAMP, ForeignKey, text, DateTime
+from sqlalchemy import Date, Table, MetaData, Column, Integer, String, Float, Boolean, TIMESTAMP, ForeignKey, text
 from sqlalchemy.dialects.postgresql import insert
 from src.db.engine import engine
 from enum import Enum
@@ -10,7 +10,7 @@ ventas = Table(
     Column("id_venta", Integer, primary_key=True),
     Column("total", Float),
     Column("tipo", String),
-    Column("creacion", TIMESTAMP),
+    Column("creacion", TIMESTAMP), # #ForeignKey("clima.fecha") no funciona porque no esta creada clima, y clima necesita que ventas este creada 
     Column("actualizacion", TIMESTAMP),
     Column("activo", Boolean)
 )
@@ -54,17 +54,25 @@ clima = Table(
     Column("nubosidad", Float)
 )
 
-feriado = Table (
-    "feriado", metadata,
-    Column("fecha", DateTime, primary_key=True),
-    Column("tipo", Integer),
-    Column("nombre", String)
-)
-
 tipo_feriado = Table (
     "tipo_feriado", metadata,
     Column("id_tipo_feriado", Integer, primary_key=True),
     Column("tipo", String)
+)
+
+feriado = Table (
+    "feriado", metadata,
+    Column("id_feriado", Integer, primary_key=True),
+    Column("fecha", Date),
+    Column("tipo", Integer, ForeignKey("tipo_feriado.id_tipo_feriado")), 
+    Column("nombre", String)
+)
+
+venta_feriado = Table (
+    "venta_feriado", metadata,
+    Column("id_venta_feriado", Integer, primary_key=True),
+    Column("id_venta", Integer, ForeignKey("ventas.id_venta")), 
+    Column("id_feriado", Integer, ForeignKey("feriado.id_feriado")) 
 )
 
 class TableEnum(Enum):
@@ -72,8 +80,9 @@ class TableEnum(Enum):
     productos = ("productos", productos)
     detalle_ventas = ("detalle_ventas", detalle_ventas)
     clima = ("clima", clima)
-    feriado = ("feriado", feriado)
     tipo_feriado = ("tipo_feriado", tipo_feriado)
+    feriado = ("feriado", feriado)
+    venta_feriado = ("venta_feriado", venta_feriado)
 
     @classmethod
     def get_table(cls, name: str):

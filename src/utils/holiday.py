@@ -3,10 +3,9 @@ import pandas as pd
 import requests
 from .weather import getYears
 from ..db.updateDB import getDBLastYear
-
+# from test_holiday import json_holiday
 
 async def getHoliday(df_venta):
-
     firstYear, lastYear = getYears(df_venta)
     dbLastYear = getDBLastYear()
 
@@ -38,8 +37,8 @@ async def getHoliday(df_venta):
 
 def buildTypesCatalog():
     data = {
-        "id_tipo_feriado": [1, 2, 3, 4],
-        "tipo": ["inamovible", "puente", "trasladable", "efemeride"]
+        "id_tipo_feriado": [1, 2, 3, 4, 5],
+        "tipo": ["inamovible", "puente", "trasladable", "no laborable", "efemeride"]
     }
     df_catalog = pd.DataFrame(data)
     return df_catalog
@@ -47,17 +46,26 @@ def buildTypesCatalog():
 def cleanHolidays(df_holiday, df_catalog):
     df_holiday["tipo"] = df_holiday["tipo"].map(df_catalog.set_index("tipo")["id_tipo_feriado"])
     df_holiday["fecha"] = pd.to_datetime(df_holiday["fecha"])
+    df_holiday["id_feriado"] = range(1, len(df_holiday) + 1)
+    df_holiday = df_holiday [["id_feriado", "fecha", "tipo", "nombre"]]
+
     return df_holiday
     
 def insertAnniversaries(df_holiday, year):
+    
     df_anniversaries = pd.DataFrame([
+        {
+            "fecha": holyThursday(df_holiday),
+            "tipo": "no laborable",
+            "nombre": "Jueves Santo"
+        },
         {
             "fecha": thirdSunday(year, 6),
             "tipo": "efemeride",
             "nombre": "Día del Padre"
         },
         {
-            "fecha": f"{year}-06-20",
+            "fecha": f"{year}-07-20",
             "tipo": "efemeride",
             "nombre": "Día del amigo"
         },
@@ -67,7 +75,7 @@ def insertAnniversaries(df_holiday, year):
             "nombre": "Día del Niño"
         },
         {
-            "fecha": f"{year}-06-20",          
+            "fecha": f"{year}-09-21",          
             "tipo": "efemeride",            
             "nombre": "Día del Estudiante/Primavera",            
         },
@@ -86,3 +94,20 @@ def thirdSunday(year, month):
     c = calendar.Calendar()
     sundays = [d for d in c.itermonthdates(year, month) if d.weekday() == 6 and d.month == month]
     return sundays[2]
+
+def holyThursday(df_holiday):
+    holy_friday = df_holiday.loc[df_holiday["nombre"].str.lower() == "viernes santo", "fecha"].iloc[0]
+    holy_friday = pd.to_datetime(holy_friday)
+    holy_thursday = (holy_friday - pd.Timedelta(days=1))
+    holy_thursday = holy_thursday.strftime('%Y-%m-%d')
+    return holy_thursday
+
+#TEST
+
+# holiday = json_holiday
+# df_holiday = pd.DataFrame(holiday)
+# df_catalog = buildTypesCatalog()
+# df_holiday = insertAnniversaries(df_holiday, 2025)
+# df_holiday = cleanHolidays(df_holiday, df_catalog)
+# print(df_holiday["fecha"].dtype)
+# print(df_holiday)

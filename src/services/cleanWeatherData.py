@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 def cleanWeather(df_clima):
 
     # Eliminar columnas innecesarias
@@ -10,8 +9,6 @@ def cleanWeather(df_clima):
         "tmax_source",
         "rhum_source",
         "prcp_source",
-        "snwd",
-        "snwd_source",
         "wspd_source",
         "pres_source",
         "cldc_source"
