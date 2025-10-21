@@ -1,4 +1,4 @@
-from sqlalchemy import Date, Table, MetaData, Column, Integer, String, Float, Boolean, TIMESTAMP, ForeignKey, text
+from sqlalchemy import Date, Table, MetaData, Column, Integer, String, Float, Boolean, ForeignKey, text, Date
 from sqlalchemy.dialects.postgresql import insert
 from src.db.engine import engine
 from enum import Enum
@@ -10,8 +10,8 @@ ventas = Table(
     Column("id_venta", Integer, primary_key=True),
     Column("total", Float),
     Column("tipo", String),
-    Column("creacion", TIMESTAMP), # #ForeignKey("clima.fecha") no funciona porque no esta creada clima, y clima necesita que ventas este creada 
-    Column("actualizacion", TIMESTAMP),
+    Column("creacion", Date), 
+    Column("actualizacion", Date),
     Column("activo", Boolean)
 )
 
@@ -22,8 +22,8 @@ productos = Table(
     Column("categoria", String),
     Column("cantidad", Integer),
     Column("total_ars", Float),
-    Column("creacion", TIMESTAMP),
-    Column("actualizacion", TIMESTAMP),
+    Column("creacion", Date),
+    Column("actualizacion", Date),
     Column("activo", Boolean)
 )
 
@@ -36,14 +36,14 @@ detalle_ventas = Table(
     Column("precio", Float),
     Column("costo", Float),
     Column("cancelada", Boolean),
-    Column("creacion", TIMESTAMP),
-    Column("actualizacion", TIMESTAMP),
+    Column("creacion", Date),
+    Column("actualizacion", Date),
     Column("activo", Boolean)
 )
 
 clima = Table(
     "clima", metadata,
-    Column("fecha", TIMESTAMP, primary_key=True),
+    Column("fecha", Date, primary_key=True),
     Column("temp_avg", Float),
     Column("temp_min", Float),
     Column("temp_max", Float),
@@ -68,13 +68,6 @@ feriado = Table (
     Column("nombre", String)
 )
 
-venta_feriado = Table (
-    "venta_feriado", metadata,
-    Column("id_venta_feriado", Integer, primary_key=True),
-    Column("id_venta", Integer, ForeignKey("ventas.id_venta")), 
-    Column("id_feriado", Integer, ForeignKey("feriado.id_feriado")) 
-)
-
 class TableEnum(Enum):
     ventas = ("ventas", ventas)
     productos = ("productos", productos)
@@ -82,7 +75,6 @@ class TableEnum(Enum):
     clima = ("clima", clima)
     tipo_feriado = ("tipo_feriado", tipo_feriado)
     feriado = ("feriado", feriado)
-    venta_feriado = ("venta_feriado", venta_feriado)
 
     @classmethod
     def get_table(cls, name: str):

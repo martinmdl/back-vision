@@ -102,10 +102,8 @@ def holyThursday(df_holiday):
     holy_thursday = holy_thursday.strftime('%Y-%m-%d')
     return holy_thursday
 
-#TEST
-
-# holiday = json_holiday
-# df_holiday = pd.DataFrame(holiday)
+# TEST
+# df_holiday = pd.DataFrame(json_holiday)
 # df_catalog = buildTypesCatalog()
 # df_holiday = insertAnniversaries(df_holiday, 2025)
 # df_holiday = cleanHolidays(df_holiday, df_catalog)
