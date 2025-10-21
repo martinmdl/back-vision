@@ -1,4 +1,5 @@
 from fastapi import UploadFile, File, APIRouter
+import pandas as pd
 from ..utils.holiday import buildTypesCatalog, cleanHolidays, getHoliday
 from ..services.cleanBusinessData import clean_xls
 from ..db.updateDB import save_to_postgres
@@ -21,22 +22,20 @@ async def upload_file(file: UploadFile = File(...)):
     # Limpieza de datos y obtención de DataFrames
     df_venta, df_producto, df_detalle_venta = clean_xls(file.file)
     
-
     # Guardar en la base de datos (upsert para no duplicar)
-    save_to_postgres(df_venta, "ventas", "idVenta")
-    save_to_postgres(df_producto, "productos", "idProducto")
-    save_to_postgres(df_detalle_venta, "detalle_ventas", "idDetalle")
+    save_to_postgres(df_venta, "ventas", "id_venta")
+    save_to_postgres(df_producto, "productos", "id_producto")
+    save_to_postgres(df_detalle_venta, "detalle_ventas", "id_detalle")
 
     # clima (consultar API: https://data.meteostat.net/daily/<AÑOS>/87585.csv.gz)
     df_clima_api = await getWeather(df_venta)
     df_clima = cleanWeather(df_clima_api)
+    save_to_postgres(df_clima, "clima", "fecha")
 
     # feriados (consultar API: https://api.argentinadatos.com/v1/feriados/<AÑOS>)
     df_feriado, df_catalog = await getHoliday(df_venta)
-    
-    save_to_postgres(df_clima, "clima", "fecha")
-    save_to_postgres(df_feriado, "feriado", "fecha")
-    save_to_postgres(df_catalog, "tipoDeFeriado", "idTipoDeFeriado") 
+    save_to_postgres(df_catalog, "tipo_feriado", "id_tipo_feriado") 
+    save_to_postgres(df_feriado, "feriado", "id_feriado")
 
     # unificar_coso
 

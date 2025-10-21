@@ -1,4 +1,4 @@
-from sqlalchemy import Table, MetaData, Column, Integer, String, Float, Boolean, TIMESTAMP, ForeignKey, text, DateTime
+from sqlalchemy import Date, Table, MetaData, Column, Integer, String, Float, Boolean, ForeignKey, text, Date
 from sqlalchemy.dialects.postgresql import insert
 from src.db.engine import engine
 from enum import Enum
@@ -7,43 +7,43 @@ metadata = MetaData()
 
 ventas = Table(
     "ventas", metadata,
-    Column("idVenta", Integer, primary_key=True),
+    Column("id_venta", Integer, primary_key=True),
     Column("total", Float),
     Column("tipo", String),
-    Column("creacion", TIMESTAMP),
-    Column("actualizacion", TIMESTAMP),
+    Column("creacion", Date), 
+    Column("actualizacion", Date),
     Column("activo", Boolean)
 )
 
 productos = Table(
     "productos", metadata,
-    Column("idProducto", String, primary_key=True),
+    Column("id_producto", String, primary_key=True),
     Column("nombre", String),
     Column("categoria", String),
     Column("cantidad", Integer),
-    Column("total_ARS", Float),
-    Column("creacion", TIMESTAMP),
-    Column("actualizacion", TIMESTAMP),
+    Column("total_ars", Float),
+    Column("creacion", Date),
+    Column("actualizacion", Date),
     Column("activo", Boolean)
 )
 
 detalle_ventas = Table(
     "detalle_ventas", metadata,
-    Column("idDetalle", Integer, primary_key=True),
-    Column("idVenta", Integer, ForeignKey("ventas.idVenta")),
-    Column("idProducto", String, ForeignKey("productos.idProducto")),
+    Column("id_detalle", Integer, primary_key=True),
+    Column("id_venta", Integer, ForeignKey("ventas.id_venta")),
+    Column("id_producto", String, ForeignKey("productos.id_producto")),
     Column("cantidad", Integer),
     Column("precio", Float),
     Column("costo", Float),
     Column("cancelada", Boolean),
-    Column("creacion", TIMESTAMP),
-    Column("actualizacion", TIMESTAMP),
+    Column("creacion", Date),
+    Column("actualizacion", Date),
     Column("activo", Boolean)
 )
 
 clima = Table(
     "clima", metadata,
-    Column("fecha", TIMESTAMP, primary_key=True),
+    Column("fecha", Date, primary_key=True),
     Column("temp_avg", Float),
     Column("temp_min", Float),
     Column("temp_max", Float),
@@ -54,17 +54,18 @@ clima = Table(
     Column("nubosidad", Float)
 )
 
-feriado = Table (
-    "feriado", metadata,
-    Column("fecha", DateTime, primary_key=True),
-    Column("tipo", Integer),
-    Column("nombre", String)
+tipo_feriado = Table (
+    "tipo_feriado", metadata,
+    Column("id_tipo_feriado", Integer, primary_key=True),
+    Column("tipo", String)
 )
 
-tipoDeFeriado = Table (
-    "tipoDeFeriado", metadata,
-    Column("idTipoDeFeriado", Integer, primary_key=True),
-    Column("tipo", String)
+feriado = Table (
+    "feriado", metadata,
+    Column("id_feriado", Integer, primary_key=True),
+    Column("fecha", Date),
+    Column("tipo", Integer, ForeignKey("tipo_feriado.id_tipo_feriado")), 
+    Column("nombre", String)
 )
 
 class TableEnum(Enum):
@@ -72,8 +73,8 @@ class TableEnum(Enum):
     productos = ("productos", productos)
     detalle_ventas = ("detalle_ventas", detalle_ventas)
     clima = ("clima", clima)
+    tipo_feriado = ("tipo_feriado", tipo_feriado)
     feriado = ("feriado", feriado)
-    tipoDeFeriado = ("tipoDeFeriado", tipoDeFeriado)
 
     @classmethod
     def get_table(cls, name: str):
