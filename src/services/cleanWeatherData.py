@@ -1,7 +1,6 @@
 import pandas as pd
 
 def cleanWeather(df_clima):
-
     # Eliminar columnas innecesarias
     df_clima = df_clima.drop(columns=[
         "temp_source",

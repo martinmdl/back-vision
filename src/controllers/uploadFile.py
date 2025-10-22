@@ -6,7 +6,7 @@ from ..db.updateDB import save_to_postgres
 from ..services.cleanWeatherData import cleanWeather
 from ..utils.weather import getWeather
 
-router = APIRouter(prefix="/upload", tags=["Upload"])
+router = APIRouter(prefix="", tags=["Upload"])
 
 @router.post("/load")
 async def upload_file(file: UploadFile = File(...)):
