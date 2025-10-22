@@ -2,7 +2,6 @@ import pandas as pd
 import uuid
 
 def clean_xls(xls_file):
-
     df_venta = pd.read_excel(xls_file, sheet_name="Ventas", skiprows=3)
     df_producto = pd.read_excel(xls_file, sheet_name="Productos")
     df_detalle_venta = pd.read_excel(xls_file, sheet_name="Adiciones")
@@ -14,7 +13,6 @@ def clean_xls(xls_file):
     return df_venta, df_producto, df_detalle_venta
 
 def clean_venta(df_venta):
-
     df_venta = df_venta.drop(columns=[
         "Fecha", "Cerrada", "Caja", "Estado", "Cliente", "Mesa", "Sala",
         "Personas", "Camarero / Repartidor", "Medio de Pago", "Fiscal", "Comentario", "Origen", "Id. Origen"
@@ -39,7 +37,6 @@ def clean_venta(df_venta):
     return df_venta
 
 def clean_producto(df_producto):
-
     # Elimina columna innecesarias
     df_producto = df_producto.drop(columns=[
         "Código", "Subcategoria", "Contiene modificadores",
@@ -66,7 +63,6 @@ def clean_producto(df_producto):
     return df_producto
 
 def clean_detalle_venta(df_detalle_venta, df_producto, df_venta):
-
     df_detalle_venta = df_detalle_venta.drop(columns=[
         "Costo modificadores", "Costo total", "Creada por", "Cocina",
         "Cancelada por", "Comentario", "Comentario de cancelación"
@@ -107,4 +103,3 @@ def clean_detalle_venta(df_detalle_venta, df_producto, df_venta):
     df_detalle_venta = df_detalle_venta[["id_detalle","id_venta","id_producto","cantidad","precio","costo","cancelada","creacion","actualizacion","activo"]]
     
     return df_detalle_venta
-
