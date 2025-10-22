@@ -38,16 +38,22 @@ async def getHoliday(df_venta):
 def buildTypesCatalog():
     data = {
         "id_tipo_feriado": [1, 2, 3, 4, 5],
-        "tipo": ["inamovible", "puente", "trasladable", "no laborable", "efemeride"]
+        "tipo": ["inamovible", "puente", "trasladable", "no laborable", "efemeride"],
     }
     df_catalog = pd.DataFrame(data)
+    df_catalog["creacion"] = pd.Timestamp.now().replace(microsecond=0)
+    df_catalog["actualizacion"] = df_catalog["creacion"]
+    df_catalog["activo"] = True
     return df_catalog
 
 def cleanHolidays(df_holiday, df_catalog):
     df_holiday["tipo"] = df_holiday["tipo"].map(df_catalog.set_index("tipo")["id_tipo_feriado"])
     df_holiday["fecha"] = pd.to_datetime(df_holiday["fecha"])
     df_holiday["id_feriado"] = range(1, len(df_holiday) + 1)
-    df_holiday = df_holiday [["id_feriado", "fecha", "tipo", "nombre"]]
+    df_holiday["creacion"] = pd.Timestamp.now().replace(microsecond=0)
+    df_holiday["actualizacion"] = df_holiday["creacion"]
+    df_holiday["activo"] = True
+    df_holiday = df_holiday [["id_feriado", "fecha", "tipo", "nombre", "creacion", "actualizacion", "activo"]]
 
     return df_holiday
     

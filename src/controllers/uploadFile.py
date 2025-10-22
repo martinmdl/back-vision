@@ -1,8 +1,8 @@
 from fastapi import UploadFile, File, APIRouter
 import pandas as pd
-from ..utils.holiday import buildTypesCatalog, cleanHolidays, getHoliday
+from ..utils.holiday import getHoliday
 from ..services.cleanBusinessData import clean_xls
-from ..db.updateDB import save_to_postgres
+from ..db.updateDB import init_db, save_to_postgres
 from ..services.cleanWeatherData import cleanWeather
 from ..utils.weather import getWeather
 
@@ -18,6 +18,8 @@ async def upload_file(file: UploadFile = File(...)):
             "message": "Por favor, suba un archivo Excel con extensión .xls o .xlsx",
             "status_code": 400
         }
+    
+    init_db()
     
     # Limpieza de datos y obtención de DataFrames
     df_venta, df_producto, df_detalle_venta = clean_xls(file.file)

@@ -51,13 +51,19 @@ clima = Table(
     Column("lluvia", Float),
     Column("viento", Float),
     Column("presion", Float),
-    Column("nubosidad", Float)
+    Column("nubosidad", Float),
+    Column("creacion", Date),
+    Column("actualizacion", Date),
+    Column("activo", Boolean)
 )
 
 tipo_feriado = Table (
     "tipo_feriado", metadata,
     Column("id_tipo_feriado", Integer, primary_key=True),
-    Column("tipo", String)
+    Column("tipo", String),
+    Column("creacion", Date),
+    Column("actualizacion", Date),
+    Column("activo", Boolean)
 )
 
 feriado = Table (
@@ -65,7 +71,10 @@ feriado = Table (
     Column("id_feriado", Integer, primary_key=True),
     Column("fecha", Date),
     Column("tipo", Integer, ForeignKey("tipo_feriado.id_tipo_feriado")), 
-    Column("nombre", String)
+    Column("nombre", String),
+    Column("creacion", Date),
+    Column("actualizacion", Date),
+    Column("activo", Boolean)
 )
 
 class TableEnum(Enum):
@@ -84,7 +93,9 @@ class TableEnum(Enum):
         raise ValueError(f"Tabla '{name}' no encontrada.")
 
 # Crear tablas si no existen
-metadata.create_all(engine)
+
+def init_db():
+    metadata.create_all(engine)
 
 def save_to_postgres(df_table, table_name, id_table):
     table = TableEnum.get_table(table_name)

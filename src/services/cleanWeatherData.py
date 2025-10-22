@@ -17,7 +17,12 @@ def cleanWeather(df_clima):
     # Transformar "year-month-date" en "fecha"
     df_clima["fecha"] = pd.to_datetime(df_clima[["year", "month", "day"]])
     df_clima = df_clima.drop(columns=["year", "month", "day"])
-    df_clima = df_clima[["fecha", "temp", "tmin", "tmax", "rhum", "prcp", "wspd", "pres", "cldc"]]
+
+    df_clima["creacion"] = pd.Timestamp.now().replace(microsecond=0)
+    df_clima["actualizacion"] = df_clima["creacion"]
+    df_clima["activo"] = True
+
+    df_clima = df_clima[["fecha", "temp", "tmin", "tmax", "rhum", "prcp", "wspd", "pres", "cldc", "creacion", "actualizacion", "activo"]]
 
     df_clima = pd.DataFrame({ "fecha":pd.date_range(start="2025-04-16", end="2025-09-04") }).merge(df_clima, on="fecha", how="left")
 
