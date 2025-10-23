@@ -5,7 +5,6 @@ import gzip
 from ..db.updateDB import getDBLastYear
 
 async def getWeather(df_venta):
-
     firstYear, lastYear = getYears(df_venta)
     dbLastYear = getDBLastYear()
 
@@ -33,7 +32,6 @@ async def getWeather(df_venta):
 
 # Del ultimo archivo subido por el usuario
 def getYears(df_venta):
-
     firstYear = df_venta['creacion'].min().date().year
     lastYear = df_venta['creacion'].max().date().year
 

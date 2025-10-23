@@ -1,17 +1,11 @@
 from fastapi import UploadFile, File, APIRouter
-import pandas as pd
-from ..utils.holiday import getHoliday
-from ..services.cleanBusinessData import clean_xls
-from ..db.updateDB import init_db, save_to_postgres
-from ..services.cleanWeatherData import cleanWeather
-from ..utils.weather import getWeather
+from ..services.uploadFileService import uploadFileService
 
 router = APIRouter(prefix="", tags=["Upload"])
 
 @router.post("/load")
 async def upload_file(file: UploadFile = File(...)):
     
-    # Validación de extensión
     if not (file.filename.endswith(".xls") or file.filename.endswith(".xlsx")):
         return {
             "error": "Formato no soportado",
@@ -19,29 +13,7 @@ async def upload_file(file: UploadFile = File(...)):
             "status_code": 400
         }
     
-    init_db()
-    
-    # Limpieza de datos y obtención de DataFrames
-    df_venta, df_producto, df_detalle_venta = clean_xls(file.file)
-    
-    # Guardar en la base de datos (upsert para no duplicar)
-    save_to_postgres(df_venta, "ventas", "id_venta")
-    save_to_postgres(df_producto, "productos", "id_producto")
-    save_to_postgres(df_detalle_venta, "detalle_ventas", "id_detalle")
-
-    # clima (consultar API: https://data.meteostat.net/daily/<AÑOS>/87585.csv.gz)
-    df_clima_api = await getWeather(df_venta)
-    df_clima = cleanWeather(df_clima_api)
-    save_to_postgres(df_clima, "clima", "fecha")
-
-    # feriados (consultar API: https://api.argentinadatos.com/v1/feriados/<AÑOS>)
-    df_feriado, df_catalog = await getHoliday(df_venta)
-    save_to_postgres(df_catalog, "tipo_feriado", "id_tipo_feriado") 
-    save_to_postgres(df_feriado, "feriado", "id_feriado")
-
-    # unificar_coso
-
-    # entrenar_modelo
+    await uploadFileService(file)
 
     return {
         "status_code": 200,
