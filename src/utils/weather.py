@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 from io import BytesIO
 import gzip
-from ..db.updateDB import getDBLastYear
+from ..db.managementDB import getDBLastYear
 
 async def getWeather(df_venta):
     firstYear, lastYear = getYears(df_venta)

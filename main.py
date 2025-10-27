@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from src.db.managementDB import getDataForML
 from src.controllers.uploadFile import router as upload_router
 
 app = FastAPI()
@@ -22,5 +23,5 @@ app.include_router(upload_router)
 
 # Test endpoint
 @app.get("/")
-async def getMessage():
-    return {"message": "API is running", "Machinne Learning": "info"}
+def getMessage():
+    return {"200": "API Running"}

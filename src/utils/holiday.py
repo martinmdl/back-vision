@@ -2,8 +2,7 @@ import calendar
 import pandas as pd
 import requests
 from .weather import getYears
-from ..db.updateDB import getDBLastYear
-# from test_holiday import json_holiday
+from ..db.managementDB import getDBLastYear
 
 async def getHoliday(df_venta):
     firstYear, lastYear = getYears(df_venta)
@@ -107,11 +106,3 @@ def holyThursday(df_holiday):
     holy_thursday = (holy_friday - pd.Timedelta(days=1))
     holy_thursday = holy_thursday.strftime('%Y-%m-%d')
     return holy_thursday
-
-# TEST
-# df_holiday = pd.DataFrame(json_holiday)
-# df_catalog = buildTypesCatalog()
-# df_holiday = insertAnniversaries(df_holiday, 2025)
-# df_holiday = cleanHolidays(df_holiday, df_catalog)
-# print(df_holiday["fecha"].dtype)
-# print(df_holiday)

@@ -1,17 +1,19 @@
-from ..db.updateDB import init_db, save_to_postgres
+from ..db.managementDB import init_db, save_to_postgres
 from ..utils.cleanBusinessData import clean_xls
 from ..utils.cleanWeatherData import cleanWeather
 from ..utils.holiday import getHoliday
 from ..utils.weather import getWeather
+from ..utils.generateML import generateML
 
 
 async def uploadFileService(file):
+    
     init_db()
     
-    # Limpieza de datos y obtención de DataFrames
+    # excel (subido por el usuario)
     df_venta, df_producto, df_detalle_venta = clean_xls(file.file)
     
-    # Guardar en la base de datos (upsert para no duplicar)
+    # Guardar en BD (upsert para no duplicar)
     save_to_postgres(df_venta, "ventas", "id_venta")
     save_to_postgres(df_producto, "productos", "id_producto")
     save_to_postgres(df_detalle_venta, "detalle_ventas", "id_detalle")
@@ -25,3 +27,6 @@ async def uploadFileService(file):
     df_feriado, df_catalog = await getHoliday(df_venta)
     save_to_postgres(df_catalog, "tipo_feriado", "id_tipo_feriado") 
     save_to_postgres(df_feriado, "feriado", "id_feriado")
+
+    # machine learning PKL
+    generateML()
