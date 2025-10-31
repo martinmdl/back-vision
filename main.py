@@ -21,7 +21,10 @@ app.add_middleware(
 
 app.include_router(upload_router)
 
-# Test endpoint
 @app.get("/")
 def getMessage():
     return {"200": "API Running"}
+
+@app.get("/favicon.ico")
+async def favicon():
+    return {"200": "Favicon"}

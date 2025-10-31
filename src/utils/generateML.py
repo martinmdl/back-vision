@@ -6,7 +6,8 @@ def generateML():
 
     # fetch BD
     dataFrame = getDataForML()
-    
+    print(dataFrame)
+
 
     # modifica DF
     # exporta modelo
