@@ -23,8 +23,6 @@ def cleanWeather(df_clima):
 
     df_clima = df_clima[["fecha", "temp", "tmin", "tmax", "rhum", "prcp", "wspd", "pres", "cldc", "creacion", "actualizacion", "activo"]]
 
-    df_clima = pd.DataFrame({ "fecha":pd.date_range(start="2025-04-16", end="2025-09-04") }).merge(df_clima, on="fecha", how="left")
-
     # Renombrar columnas
     df_clima = df_clima.rename(columns={
         "temp": "temp_avg",
