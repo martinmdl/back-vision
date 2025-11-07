@@ -43,11 +43,6 @@ def clean_producto(df_producto):
         "Cant. en adiciones", "Cant. en modificadores"
     ], errors='ignore')
 
-    # Crear idProducto con hashes
-    df_producto["id_producto"] = df_producto.apply(
-        lambda row: f"{row['Categoría'][:3].upper()}{str(uuid.uuid4())[:8]}", axis=1
-    )
-
     df_producto["creacion"] = df_producto["actualizacion"] = pd.Timestamp.now().replace(microsecond=0)
     df_producto["activo"] = True
 
@@ -58,7 +53,7 @@ def clean_producto(df_producto):
         "Cantidad": "cantidad",
         "Total ($)": "total_ars"
     })
-    df_producto = df_producto[["id_producto", "nombre", "categoria", "cantidad", "total_ars", "creacion", "actualizacion", "activo"]]
+    df_producto = df_producto[["nombre", "categoria", "cantidad", "total_ars", "creacion", "actualizacion", "activo"]]
     
     return df_producto
 
@@ -73,7 +68,7 @@ def clean_detalle_venta(df_detalle_venta, df_producto, df_venta):
 
     df_detalle_venta["Creación"] = pd.to_datetime(df_detalle_venta["Creación"])
 
-    mapa = dict(zip(df_producto["nombre"], df_producto["id_producto"]))
+    mapa = dict(zip(df_producto["nombre"], df_producto["nombre"]))
     df_detalle_venta["id_producto"] = df_detalle_venta["Producto"].map(mapa)
     # Eliminar filas sin idProducto (productos no mapeados)
     df_detalle_venta = df_detalle_venta.dropna(subset=["id_producto"])

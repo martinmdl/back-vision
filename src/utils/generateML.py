@@ -8,9 +8,6 @@ import numpy as np
 # sobreescribir predictSales.pkl
 def generateML():
 
-    dataFrame = getDataForML()
-    print(dataFrame)
-
     df = getDataForML()
 
     # Crear features de fecha
@@ -20,7 +17,7 @@ def generateML():
 
     # Definir Target y Features
     y = df["cantidad_vendida"]
-    X = df.drop(columns=["cantidad_vendida", "creacion"])
+    X = df.drop(columns=["cantidad_vendida", "creacion"]) # TODO: borrar id_producto desde la query
 
     # Columnas categóricas
     cat_cols = X.select_dtypes(include=["object"]).columns.tolist()
@@ -48,10 +45,9 @@ def generateML():
     # Predecir y evaluar
     test_pool = Pool(X_test, cat_features=cat_cols)
     pred = model.predict(test_pool)
-    mae = mean_absolute_error(y_test, pred)
+    mae = mean_absolute_error(y_test, pred) # TODO: mejorar metricas 
     rmse = np.sqrt(mean_squared_error(y_test, pred))
 
     print("Predicciones: ",pred)
     print("MAE: ", mae)
     print("RMSE: ", rmse)
-    

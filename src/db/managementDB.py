@@ -19,8 +19,7 @@ ventas = Table(
 
 productos = Table(
     "productos", metadata,
-    Column("id_producto", String, primary_key=True),
-    Column("nombre", String),
+    Column("nombre", String, primary_key=True),
     Column("categoria", String),
     Column("cantidad", Integer),
     Column("total_ars", Float),
@@ -33,7 +32,7 @@ detalle_ventas = Table(
     "detalle_ventas", metadata,
     Column("id_detalle", Integer, primary_key=True),
     Column("id_venta", Integer, ForeignKey("ventas.id_venta")),
-    Column("id_producto", String, ForeignKey("productos.id_producto")),
+    Column("id_producto", String, ForeignKey("productos.nombre")),
     Column("cantidad", Integer),
     Column("precio", Float),
     Column("costo", Float),

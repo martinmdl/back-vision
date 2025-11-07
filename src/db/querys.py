@@ -12,7 +12,6 @@ unifyDataFrameQuery = """
         INNER JOIN tipo_feriado tf ON tf.id_tipo_feriado = f.tipo
     )
     SELECT
-        p.id_producto,
         p.nombre,
         f.creacion,
         COALESCE(SUM(dv.cantidad), 0) AS cantidad_vendida,
@@ -29,12 +28,12 @@ unifyDataFrameQuery = """
     FROM productos p
     CROSS JOIN fechas f
     LEFT JOIN detalle_ventas dv 
-    ON dv.id_producto = p.id_producto 
+    ON dv.id_producto = p.nombre 
     AND dv.creacion = f.creacion
     LEFT JOIN clima c
     ON c.fecha = f.creacion
     LEFT JOIN feriados fer ON fer.fecha = f.creacion
-    GROUP BY p.id_producto, p.nombre, f.creacion, c.temp_avg, c.temp_min, c.temp_max, 
+    GROUP BY p.nombre, f.creacion, c.temp_avg, c.temp_min, c.temp_max, 
     c.humedad, c.lluvia, c.viento, c.presion, c.nubosidad, fer.tipo, fer.nombre
     ORDER BY f.creacion, p.nombre;
 """

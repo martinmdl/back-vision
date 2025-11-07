@@ -15,7 +15,7 @@ async def uploadFileService(file):
     
     # Guardar en BD (upsert para no duplicar)
     save_to_postgres(df_venta, "ventas", "id_venta")
-    save_to_postgres(df_producto, "productos", "id_producto")
+    save_to_postgres(df_producto, "productos", "nombre")
     save_to_postgres(df_detalle_venta, "detalle_ventas", "id_detalle")
 
     # clima (consultar API: https://data.meteostat.net/daily/<AÑOS>/87585.csv.gz)
