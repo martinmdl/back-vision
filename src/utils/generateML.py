@@ -3,6 +3,7 @@ from catboost import CatBoostRegressor, Pool
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 import pandas as pd
 import numpy as np
+import os
 
 
 # sobreescribir predictSales.pkl
@@ -17,10 +18,14 @@ def generateML():
 
     # Definir Target y Features
     y = df["cantidad_vendida"]
-    X = df.drop(columns=["cantidad_vendida", "creacion"]) # TODO: borrar id_producto desde la query
+    X = df.drop(columns=["cantidad_vendida", "creacion"]) 
 
     # Columnas categóricas
-    cat_cols = X.select_dtypes(include=["object"]).columns.tolist()
+    cat_cols = ["nombre", "feriado", "tipo_feriado"]
+
+    print("Orden de columnas usado para entrenar:")
+    for i, col in enumerate(X.columns):
+        print(i, col)
 
     # Train / test simple
     X_train = X[:-30] 
@@ -28,7 +33,7 @@ def generateML():
     y_train = y[:-30] 
     y_test = y[-30:]
 
-    # Entrenar
+    # Entrenar y Guardar
     train_pool = Pool(X_train, y_train, cat_features=cat_cols)
     model = CatBoostRegressor(
     iterations=1000,
@@ -41,6 +46,9 @@ def generateML():
     verbose=100
     )
     model.fit(train_pool)
+    os.makedirs("src/model", exist_ok=True)
+    print(model.get_cat_feature_indices())
+    model.save_model("src/model/catboost_model.cbm")
 
     # Predecir y evaluar
     test_pool = Pool(X_test, cat_features=cat_cols)

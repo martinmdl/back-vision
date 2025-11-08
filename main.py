@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.db.managementDB import getDataForML
 from src.controllers.uploadFile import router as upload_router
+from src.controllers.predictSales import router as predict_router
 
 app = FastAPI()
 
@@ -20,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(upload_router)
+app.include_router(predict_router)
 
 @app.get("/")
 def getMessage():
