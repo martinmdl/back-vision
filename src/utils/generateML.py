@@ -23,10 +23,6 @@ def generateML():
     # Columnas categóricas
     cat_cols = ["nombre", "feriado", "tipo_feriado"]
 
-    print("Orden de columnas usado para entrenar:")
-    for i, col in enumerate(X.columns):
-        print(i, col)
-
     # Train / test simple
     X_train = X[:-30] 
     X_test = X[-30:]
@@ -36,18 +32,18 @@ def generateML():
     # Entrenar y Guardar
     train_pool = Pool(X_train, y_train, cat_features=cat_cols)
     model = CatBoostRegressor(
-    iterations=1000,
-    depth=6,
-    learning_rate=0.05,
-    loss_function="RMSE",
-    eval_metric="RMSE",
-    random_seed=42,
-    early_stopping_rounds=50,
-    verbose=100
+        iterations=1000,
+        depth=6,
+        learning_rate=0.05,
+        loss_function="RMSE",
+        eval_metric="RMSE",
+        random_seed=42,
+        early_stopping_rounds=50,
+        verbose=100
     )
+
     model.fit(train_pool)
     os.makedirs("src/model", exist_ok=True)
-    print(model.get_cat_feature_indices())
     model.save_model("src/model/catboost_model.cbm")
 
     # Predecir y evaluar

@@ -3,7 +3,7 @@ from sqlalchemy import Date, Table, MetaData, Column, Integer, String, Float, Bo
 from sqlalchemy.dialects.postgresql import insert
 from src.db.engine import engine
 from enum import Enum
-from src.db.querys import unifyDataFrameQuery, getDBLastYearQuery
+from src.db.querys import unifyDataFrameQuery, getDBLastYearQuery, getDBProducts, getDBFeriados
 
 metadata = MetaData()
 
@@ -115,9 +115,19 @@ def getDBLastYear():
     with engine.connect() as conn:
         result = conn.execute(text(getDBLastYearQuery))
         last_year = result.scalar()
-    return int(last_year) if last_year else None
+        return int(last_year) if last_year else None
 
 def getDataForML():
     with engine.connect() as conn:
         result = conn.execute(text(unifyDataFrameQuery))
+        return pd.DataFrame(result.fetchall(), columns=result.keys())
+    
+def getProducts():
+    with engine.connect() as conn:
+        result = conn.execute(text(getDBProducts))
+        return pd.DataFrame(result.fetchall(), columns=result.keys())
+
+def getHolidays():
+    with engine.connect() as conn:
+        result = conn.execute(text(getDBFeriados))
         return pd.DataFrame(result.fetchall(), columns=result.keys())

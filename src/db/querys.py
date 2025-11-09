@@ -39,3 +39,18 @@ unifyDataFrameQuery = """
 """
 
 getDBLastYearQuery = "SELECT MAX(EXTRACT(YEAR FROM creacion)) FROM ventas"
+
+getDBProducts = "SELECT nombre FROM productos"
+
+getDBFeriados = """
+    SELECT DISTINCT ON (fer.fecha)
+        fer.fecha,
+        fer.nombre,
+        tf.tipo
+    FROM feriado fer
+    INNER JOIN tipo_feriado tf 
+        ON fer.tipo = tf.id_tipo_feriado
+    ORDER BY 
+        fer.fecha,
+        CASE WHEN tf.tipo = 'efemeride' THEN 1 ELSE 2 END;
+"""
