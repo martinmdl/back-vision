@@ -6,5 +6,22 @@ router = APIRouter(prefix="", tags=["Predict"])
 @router.post("/predict")
 
 async def predict():
-    predicciones = await predecir_7_dias()
-    return predicciones.to_dict(orient="records")
+    try:
+        predicciones = await predecir_7_dias()
+        return {
+            "status_code": 200,
+            "message": "Predicción completa",
+            "data": predicciones.to_dict(orient="records")
+        }
+
+    except ValueError as e:
+        return {
+            "status_code": 400,
+            "message": f"Error en los datos: {str(e)}"
+        }
+
+    except Exception as e:
+        return {
+            "status_code": 500,
+            "message": f"Error interno del servidor: {str(e)}"
+        }

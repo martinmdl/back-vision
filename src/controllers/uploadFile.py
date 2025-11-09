@@ -13,9 +13,21 @@ async def upload_file(file: UploadFile = File(...)):
             "status_code": 400
         }
     
-    await uploadFileService(file)
+    try:
+        await uploadFileService(file)
+        return {
+            "status_code": 200,
+            "message": "Datos cargados correctamente",
+        }
 
-    return {
-        "status_code": 200,
-        "message": "Datos cargados correctamente"
-    }
+    except ValueError as e:
+        return {
+            "status_code": 400,
+            "message": f"Error en los datos: {str(e)}"
+        }
+
+    except Exception as e:
+        return {
+            "status_code": 500,
+            "message": f"Error interno del servidor: {str(e)}"
+        }
