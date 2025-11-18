@@ -17,7 +17,7 @@ async def predict():
     except ValueError as e:
         return {
             "status_code": 400,
-            "message": f"Error en los datos: {str(e)}"
+            "message": f"Error en los datos"
         }
 
     except Exception as e:

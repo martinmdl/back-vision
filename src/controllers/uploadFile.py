@@ -24,7 +24,7 @@ async def upload_file(file: UploadFile = File(...)):
     except ValueError as e:
         raise HTTPException(
             status_code=400,
-            detail=f"La estructura del excel no coincide con la esperada: {str(e)}"
+            detail=f"La estructura del excel no coincide con la esperada"
         )
 
     except Exception as e:
