@@ -47,7 +47,7 @@ async def obtener_clima_proximos_dias():
         "longitude": -58.495826,
         "timezone": "auto",
         "daily": "temperature_2m_max,temperature_2m_min,temperature_2m_mean,relative_humidity_2m_mean,rain_sum,cloud_cover_mean,wind_speed_10m_mean,surface_pressure_mean",
-        "forecast_days": 8
+        "forecast_days": 7
     }
 
     r = requests.get(base_url, params=params)
