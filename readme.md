@@ -31,3 +31,5 @@ uvicorn main:app --reload
 ```
 pip freeze > requirements.txt
 ```
+<img width="828" height="739" alt="imagen" src="https://github.com/user-attachments/assets/c0f8c957-e739-43bb-9824-2c25beb1acf5" />
+
