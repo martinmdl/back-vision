@@ -31,6 +31,8 @@ uvicorn main:app --reload
 ```
 pip freeze > requirements.txt
 ```
+
+**Diagrama de flujo**
 <img width="828" height="739" alt="imagen" src="https://github.com/user-attachments/assets/c0f8c957-e739-43bb-9824-2c25beb1acf5" />
 
 <img width="679" height="686" alt="Postgre_ML" src="https://github.com/user-attachments/assets/152c5ef6-ed70-4195-986d-e8565dbfdb2c" />
