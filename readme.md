@@ -1,11 +1,9 @@
 ### Backend proyecto BDs
 
 #### Instalar dependencias
-```
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-```
+`py -3.11 -m venv .venv` crea virtual environment con python 3.11.X
+`.venv\Scripts\activate` ingresa en el virtual environment
+`pip install -r requirements.txt` instala las dependencias especificadas en requirements.txt
 
 #### Crear environment variables en powershell
 ```
@@ -31,6 +29,9 @@ uvicorn main:app --reload
 ```
 pip freeze > requirements.txt
 ```
+
+#### Salir de *(.venv)*
+`deactivate`
 
 #### Diagramas
 
